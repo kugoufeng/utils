@@ -22,7 +22,12 @@ public class ZipUtil
     public static void zipFolder(String folder)
         throws ZipException
     {
-        new ZipFile(folder.concat(".zip")).addFolder(new File(folder));
+        String file = folder.concat(".zip");
+        if (FileUtil.isFileExists(file))
+        {
+            FileUtil.deleteFile(file);
+        }
+        new ZipFile(file).addFolder(new File(folder));
     }
 
     /**
@@ -34,7 +39,28 @@ public class ZipUtil
     public static void unZipFolder(String zipPath)
         throws ZipException
     {
-        new ZipFile(zipPath).extractAll(zipPath.substring(0, zipPath.lastIndexOf("/")));
+        unZipFolder(zipPath, false);
+    }
+
+    /**
+     * 解压压缩文件到当前文件夹
+     *
+     * @param zipPath
+     * @author fengjiangtao
+     */
+    public static void unZipFolder(String zipPath, boolean delZip)
+        throws ZipException
+    {
+        String dir = zipPath.substring(0, zipPath.lastIndexOf("/"));
+        if (FileUtil.isFileExists(dir))
+        {
+            FileUtil.deleteDir(dir);
+        }
+        new ZipFile(zipPath).extractAll(dir);
+        if (delZip)
+        {
+            FileUtil.deleteFile(zipPath);
+        }
     }
 
 }
