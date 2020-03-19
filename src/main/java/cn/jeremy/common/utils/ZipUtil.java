@@ -51,16 +51,15 @@ public class ZipUtil
     public static void unZipFolder(String zipPath, boolean delZip)
         throws ZipException
     {
-        String dir = zipPath.substring(0, zipPath.lastIndexOf("/"));
+        String dir = zipPath.substring(0, zipPath.length() - 4);
         if (FileUtil.isFileExists(dir))
         {
             FileUtil.deleteDir(dir);
         }
-        new ZipFile(zipPath).extractAll(dir);
+        new ZipFile(zipPath).extractAll(zipPath.substring(0, zipPath.lastIndexOf("/")));
         if (delZip)
         {
             FileUtil.deleteFile(zipPath);
         }
     }
-
 }
