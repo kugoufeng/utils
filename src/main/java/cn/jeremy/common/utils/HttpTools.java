@@ -100,8 +100,8 @@ public class HttpTools
      *
      * @param httpMethod 类HttpMethod
      * @param postMethod 类PostMethod
-     * @param getMethod 类GetMethod
-     * @param headers 请求头
+     * @param getMethod  类GetMethod
+     * @param headers    请求头
      */
     private void setHeaders(EntityEnclosingMethod httpMethod, PostMethod postMethod, GetMethod getMethod,
         String headers)
@@ -146,8 +146,8 @@ public class HttpTools
     /**
      * 发送http请求，并返回响应的xml报文
      *
-     * @param url 请求地址
-     * @param xml 访问报文
+     * @param url     请求地址
+     * @param xml     访问报文
      * @param headers 请求头
      * @return cn.jeremy.stock.bean.HttpResult
      */
@@ -267,6 +267,53 @@ public class HttpTools
     }
 
     /**
+     * 下载文件
+     *
+     * @param url
+     * @param filePath
+     * @return cn.jeremy.common.utils.bean.HttpResult
+     * @author fengjiangtao
+     */
+    public HttpResult downFileByPost(String url, String filePath, String respCharset, String requestBody)
+    {
+
+        LOGGER.debug("send http request, url:{}, filePath:{}", url, filePath);
+        HttpResult resp = null;
+        PostMethod httpMethod = new PostMethod(url);
+        FileOutputStream output = null;
+        try
+        {
+            httpMethod.setRequestEntity(new StringRequestEntity(requestBody, "application/json", "UTF-8"));
+            int resultCode = httpClient.executeMethod(httpMethod);
+            if (HttpStatus.SC_OK == resultCode)
+            {
+
+                File file = new File(filePath);
+                FileUtil.createOrExistsFile(file);
+                output = new FileOutputStream(file);
+                output.write(httpMethod.getResponseBody());
+                resp = new HttpResult();
+                resp.setRespCode(HttpStatus.SC_OK);
+            }
+            else
+            {
+                resp = getHttpResult(resultCode, respCharset, httpMethod);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            LOGGER.error("request has error, url:{}, filePath:{}, e:{}", url, filePath, ex);
+        }
+        finally
+        {
+            FileUtil.closeIO(output);
+            httpMethod.releaseConnection();
+        }
+        return resp;
+    }
+
+    /**
      * 根据result设置响应结果
      *
      * @param resultCode 响应码
@@ -335,9 +382,9 @@ public class HttpTools
     /**
      * 以post的方式发送http请求
      *
-     * @param url 请求地址
+     * @param url        请求地址
      * @param postParams 访问参数
-     * @param headers 请求头地址
+     * @param headers    请求头地址
      * @return cn.jeremy.stock.bean.HttpResult
      */
     public HttpResult sendRequestByPost(String url, Map<String, String> postParams, String headers, String respCharset)
@@ -397,7 +444,7 @@ public class HttpTools
     /**
      * 发送get请求
      *
-     * @param url 请求地址
+     * @param url     请求地址
      * @param headers 请求头
      * @return cn.jeremy.stock.bean.HttpResult
      */
@@ -601,7 +648,7 @@ public class HttpTools
     /**
      * 找出响应头中的cookie，并设置成所有的
      *
-     * @param headers 响应头
+     * @param headers   响应头
      * @param removeKey 不包含的cookie值
      * @return java.lang.String
      * @author fengjiangtao
@@ -639,7 +686,7 @@ public class HttpTools
      * 获取指定的cookie，并转换为字符串
      *
      * @param headers 响应头
-     * @param key cookie的key
+     * @param key     cookie的key
      * @return java.lang.String
      * @author fengjiangtao
      */
