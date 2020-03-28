@@ -1341,6 +1341,18 @@ public class DateTools
     }
 
     /**
+     * 指定日期是在一月中的第几天
+     *
+     * @return int
+     */
+    public static int getDayOfMonth(Date date)
+    {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return c.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
      * 判断时间是否是今天
      *
      * @param date 日期
